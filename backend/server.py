@@ -134,18 +134,18 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 # Initialize admin user
 async def create_admin_user():
-    existing_admin = await db.usuarios.find_one({"email": "luiz.ribeiro"})
+    existing_admin = await db.usuarios.find_one({"email": "luiz.ribeiro@ofertas.pit"})
     if not existing_admin:
         hashed_password = hash_password("secure")
         admin_user = {
             "id": str(uuid.uuid4()),
-            "email": "luiz.ribeiro",
+            "email": "luiz.ribeiro@ofertas.pit",
             "senha": hashed_password,
             "role": "admin",
             "created_at": datetime.now(timezone.utc)
         }
         await db.usuarios.insert_one(admin_user)
-        print("Admin user created: luiz.ribeiro")
+        print("Admin user created: luiz.ribeiro@ofertas.pit")
 
 # Auth Routes
 @api_router.post("/auth/login", response_model=Token)
