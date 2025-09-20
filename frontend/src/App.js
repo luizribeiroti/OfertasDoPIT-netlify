@@ -584,16 +584,19 @@ const LoginPage = () => {
 
 // Admin Dashboard
 const AdminPage = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [promocoes, setPromocoes] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
+    if (!authLoading && !user) {
+      navigate('/login');
+    } else if (user) {
       fetchData();
     }
-  }, [user]);
+  }, [user, authLoading, navigate]);
 
   const fetchData = async () => {
     try {
@@ -611,8 +614,17 @@ const AdminPage = () => {
     }
   };
 
+  if (authLoading || (!user && authLoading)) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Verificando autenticação...</p>
+      </div>
+    );
+  }
+
   if (!user) {
-    return <LoginPage />;
+    return null; // Will redirect to login
   }
 
   if (loading) {
