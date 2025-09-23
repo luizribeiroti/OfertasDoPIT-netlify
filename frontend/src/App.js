@@ -582,12 +582,190 @@ const LoginPage = () => {
   );
 };
 
+// Create/Edit Offer Form Component
+const OfferForm = ({ offer, onSave, onCancel, categorias }) => {
+  const [formData, setFormData] = useState({
+    titulo: offer?.titulo || '',
+    imagemProduto: offer?.imagemProduto || '',
+    precoOriginal: offer?.precoOriginal || '',
+    precoOferta: offer?.precoOferta || '',
+    linkOferta: offer?.linkOferta || '',
+    categoria_id: offer?.categoria_id || '',
+    ativo: offer?.ativo !== undefined ? offer.ativo : true
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const data = {
+        ...formData,
+        precoOriginal: parseFloat(formData.precoOriginal),
+        precoOferta: parseFloat(formData.precoOferta)
+      };
+
+      if (offer) {
+        // Update existing offer
+        await axios.put(`${API}/promocoes/${offer.id}`, data);
+      } else {
+        // Create new offer
+        await axios.post(`${API}/promocoes`, data);
+      }
+
+      onSave();
+    } catch (error) {
+      setError(error.response?.data?.detail || 'Erro ao salvar oferta');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="offer-form-container">
+      <div className="offer-form-card">
+        <h2>{offer ? 'Editar Oferta' : 'Nova Oferta'}</h2>
+        
+        <form onSubmit={handleSubmit} className="offer-form">
+          <div className="form-group">
+            <label htmlFor="titulo">Título da Oferta:</label>
+            <input
+              type="text"
+              id="titulo"
+              value={formData.titulo}
+              onChange={(e) => setFormData({...formData, titulo: e.target.value})}
+              required
+              className="form-input"
+              placeholder="Ex: Smart TV 50' 4K Samsung"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="imagemProduto">URL da Imagem:</label>
+            <input
+              type="url"
+              id="imagemProduto"
+              value={formData.imagemProduto}
+              onChange={(e) => setFormData({...formData, imagemProduto: e.target.value})}
+              required
+              className="form-input"
+              placeholder="https://exemplo.com/imagem.jpg"
+            />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="precoOriginal">Preço Original (R$):</label>
+              <input
+                type="number"
+                step="0.01"
+                id="precoOriginal"
+                value={formData.precoOriginal}
+                onChange={(e) => setFormData({...formData, precoOriginal: e.target.value})}
+                required
+                className="form-input"
+                placeholder="2499.99"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="precoOferta">Preço da Oferta (R$):</label>
+              <input
+                type="number"
+                step="0.01"
+                id="precoOferta"
+                value={formData.precoOferta}
+                onChange={(e) => setFormData({...formData, precoOferta: e.target.value})}
+                required
+                className="form-input"
+                placeholder="1799.99"
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="linkOferta">Link da Oferta:</label>
+            <input
+              type="url"
+              id="linkOferta"
+              value={formData.linkOferta}
+              onChange={(e) => setFormData({...formData, linkOferta: e.target.value})}
+              required
+              className="form-input"
+              placeholder="https://loja.com/produto"
+            />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="categoria_id">Categoria:</label>
+              <select
+                id="categoria_id"
+                value={formData.categoria_id}
+                onChange={(e) => setFormData({...formData, categoria_id: e.target.value})}
+                required
+                className="form-select"
+              >
+                <option value="">Selecione uma categoria</option>
+                {categorias.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.nome}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={formData.ativo}
+                  onChange={(e) => setFormData({...formData, ativo: e.target.checked})}
+                  className="form-checkbox"
+                />
+                Oferta ativa
+              </label>
+            </div>
+          </div>
+
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+
+          <div className="form-actions">
+            <button 
+              type="button" 
+              onClick={onCancel}
+              className="cancel-btn"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="save-btn"
+            >
+              {loading ? 'Salvando...' : (offer ? 'Atualizar' : 'Criar Oferta')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 // Admin Dashboard
 const AdminPage = () => {
   const { user, loading: authLoading } = useAuth();
   const [promocoes, setPromocoes] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showOfferForm, setShowOfferForm] = useState(false);
+  const [editingOffer, setEditingOffer] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -614,6 +792,40 @@ const AdminPage = () => {
     }
   };
 
+  const handleNewOffer = () => {
+    setEditingOffer(null);
+    setShowOfferForm(true);
+  };
+
+  const handleEditOffer = (offer) => {
+    setEditingOffer(offer);
+    setShowOfferForm(true);
+  };
+
+  const handleDeleteOffer = async (offerId) => {
+    if (window.confirm('Tem certeza que deseja excluir esta oferta?')) {
+      try {
+        await axios.delete(`${API}/promocoes/${offerId}`);
+        fetchData(); // Refresh data
+        alert('Oferta excluída com sucesso!');
+      } catch (error) {
+        alert('Erro ao excluir oferta: ' + (error.response?.data?.detail || error.message));
+      }
+    }
+  };
+
+  const handleOfferSave = () => {
+    setShowOfferForm(false);
+    setEditingOffer(null);
+    fetchData(); // Refresh data
+    alert('Oferta salva com sucesso!');
+  };
+
+  const handleOfferCancel = () => {
+    setShowOfferForm(false);
+    setEditingOffer(null);
+  };
+
   if (authLoading || (!user && authLoading)) {
     return (
       <div className="loading-container">
@@ -633,6 +845,17 @@ const AdminPage = () => {
         <div className="loading-spinner"></div>
         <p>Carregando dashboard...</p>
       </div>
+    );
+  }
+
+  if (showOfferForm) {
+    return (
+      <OfferForm
+        offer={editingOffer}
+        onSave={handleOfferSave}
+        onCancel={handleOfferCancel}
+        categorias={categorias}
+      />
     );
   }
 
