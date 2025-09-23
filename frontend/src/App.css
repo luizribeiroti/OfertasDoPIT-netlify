@@ -171,21 +171,35 @@ body {
 
 .theme-toggle {
   background: var(--pit-bg-secondary);
-  border: none;
+  border: 2px solid var(--pit-border);
   color: var(--pit-text);
-  padding: var(--spacing-sm);
-  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: var(--spacing-sm);
+  min-width: 80px;
+  font-weight: 500;
 }
 
 .theme-toggle:hover {
   background: var(--pit-primary);
   color: var(--pit-bg-main);
-  transform: rotate(180deg);
+  border-color: var(--pit-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-pit);
+}
+
+.theme-toggle-text {
+  font-size: 0.85rem;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .admin-controls {
