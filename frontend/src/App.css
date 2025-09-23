@@ -54,15 +54,44 @@
 
 /* Light Theme Variables */
 .light {
-  --pit-bg-main: #F8F9FA;
-  --pit-bg-secondary: #E9ECEF;
+  --pit-bg-main: #FFFFFF;
+  --pit-bg-secondary: #F8F9FA;
   --pit-bg-card: #FFFFFF;
   --pit-text: #212529;
   --pit-text-secondary: #6C757D;
-  --pit-border: #DEE2E6;
+  --pit-border: #E9ECEF;
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --shadow-pit: 0 8px 32px rgba(255, 215, 0, 0.3);
+}
+
+/* Light theme specific adjustments */
+.light .header-pit {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom-color: var(--pit-primary);
+}
+
+.light .nav-link.active {
+  background-color: var(--pit-primary);
+  color: var(--pit-bg-main);
+}
+
+.light .hero-section {
+  background: linear-gradient(135deg, #F8F9FA, #FFFFFF);
+}
+
+.light .hero-section::before {
+  background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+}
+
+.light .deal-card {
+  border: 1px solid var(--pit-border);
+}
+
+.light .product-detail-container {
+  border: 1px solid var(--pit-border);
 }
 
 /* Reset and Base Styles */
