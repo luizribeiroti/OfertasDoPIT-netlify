@@ -38,8 +38,20 @@ const ThemeProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark);
+    // Apply theme class to document element
+    if (isDark) {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    }
   }, [isDark]);
+
+  // Initialize dark theme on first load
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme }}>
