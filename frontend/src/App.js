@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Sun, Moon, Menu, X, ShoppingBag, Tag, Users, LogOut, Plus, Edit, Trash2, Search, Filter } from 'lucide-react';
 import './App.css';
