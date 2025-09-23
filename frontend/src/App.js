@@ -1170,6 +1170,7 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/categorias" element={<CategoriesPage />} />
                 <Route path="/grupos" element={<GroupsPage />} />
+                <Route path="/produto/:id" element={<ProductDetailPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/admin" element={<AdminPage />} />
               </Routes>
