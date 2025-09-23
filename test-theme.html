@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Toggle Tema - Ofertas do PIT</title>
+    <style>
+        :root {
+            --pit-primary: #FFD700;
+            --pit-bg-main: #1a1d29;
+            --pit-bg-card: #343a50;
+            --pit-text: #FFFFFF;
+            --pit-border: #404756;
+        }
+
+        .light {
+            --pit-bg-main: #FFFFFF;
+            --pit-bg-card: #FFFFFF;
+            --pit-text: #212529;
+            --pit-border: #E9ECEF;
+        }
+
+        body {
+            background-color: var(--pit-bg-main);
+            color: var(--pit-text);
+            font-family: Arial, sans-serif;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--pit-bg-card);
+            border: 2px solid var(--pit-border);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle {
+            background: var(--pit-primary);
+            color: #1a1d29;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="dark">
+    <h1>Teste do Toggle de Tema - Ofertas do PIT</h1>
+    
+    <div class="card">
+        <h2>Status do Tema</h2>
+        <p id="theme-status">Tema atual: Escuro</p>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            🌙 Mudar para Claro
+        </button>
+    </div>
+
+    <div class="card">
+        <h3>Penalty Bola de Futsal RX 500 XXIII</h3>
+        <p><strong>De:</strong> R$ 89,45</p>
+        <p><strong>Por:</strong> R$ 67,90</p>
+        <p><strong>Desconto:</strong> 24% OFF</p>
+    </div>
+
+    <script>
+        let isDark = true;
+
+        function toggleTheme() {
+            const body = document.body;
+            const button = document.querySelector('.theme-toggle');
+            const status = document.getElementById('theme-status');
+            
+            if (isDark) {
+                // Switch to light theme
+                body.classList.remove('dark');
+                body.classList.add('light');
+                button.innerHTML = '☀️ Mudar para Escuro';
+                status.textContent = 'Tema atual: Claro';
+                isDark = false;
+            } else {
+                // Switch to dark theme
+                body.classList.remove('light');
+                body.classList.add('dark');
+                button.innerHTML = '🌙 Mudar para Claro';
+                status.textContent = 'Tema atual: Escuro';
+                isDark = true;
+            }
+        }
+    </script>
+</body>
+</html>
