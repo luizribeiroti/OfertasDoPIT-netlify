@@ -882,7 +882,10 @@ const AdminPage = () => {
       </div>
 
       <div className="admin-actions">
-        <button className="admin-action-btn primary">
+        <button 
+          onClick={handleNewOffer}
+          className="admin-action-btn primary"
+        >
           <Plus size={20} />
           Nova Oferta
         </button>
@@ -921,10 +924,16 @@ const AdminPage = () => {
                       </span>
                     </td>
                     <td className="actions-cell">
-                      <button className="action-btn edit">
+                      <button 
+                        onClick={() => handleEditOffer(promocao)}
+                        className="action-btn edit"
+                      >
                         <Edit size={16} />
                       </button>
-                      <button className="action-btn delete">
+                      <button 
+                        onClick={() => handleDeleteOffer(promocao.id)}
+                        className="action-btn delete"
+                      >
                         <Trash2 size={16} />
                       </button>
                     </td>
