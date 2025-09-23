@@ -39,6 +39,19 @@
   --font-body: 'Roboto', Arial, sans-serif;
 }
 
+/* Dark Theme (Default) */
+.dark {
+  --pit-bg-main: #1a1d29;
+  --pit-bg-secondary: #2c3040;
+  --pit-bg-card: #343a50;
+  --pit-text: #FFFFFF;
+  --pit-text-secondary: #B8BCC8;
+  --pit-border: #404756;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
 /* Light Theme Variables */
 .light {
   --pit-bg-main: #F8F9FA;
