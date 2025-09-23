@@ -159,9 +159,13 @@ const Header = () => {
           <button 
             onClick={toggleTheme}
             className="theme-toggle"
-            aria-label="Alternar tema"
+            aria-label={isDark ? "Ativar tema claro" : "Ativar tema escuro"}
+            title={isDark ? "Mudar para tema claro" : "Mudar para tema escuro"}
           >
             {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            <span className="theme-toggle-text">
+              {isDark ? "Claro" : "Escuro"}
+            </span>
           </button>
 
           {/* Admin Controls */}
