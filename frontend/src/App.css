@@ -398,6 +398,7 @@ body {
   margin-bottom: var(--spacing-2xl);
 }
 
+/* Deal Card Updates - Clickable */
 .deal-card {
   background: var(--pit-bg-card);
   border-radius: var(--radius-lg);
@@ -405,11 +406,38 @@ body {
   box-shadow: var(--shadow-md);
   transition: all 0.3s ease;
   position: relative;
+  cursor: pointer;
 }
 
 .deal-card:hover {
   transform: translateY(-8px);
   box-shadow: var(--shadow-lg);
+}
+
+.deal-button-container {
+  margin-top: var(--spacing-md);
+}
+
+.deal-button {
+  display: block;
+  width: 100%;
+  background: var(--pit-primary);
+  color: var(--pit-bg-main);
+  text-decoration: none;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid var(--pit-primary);
+  cursor: pointer;
+}
+
+.deal-button:hover {
+  background: transparent;
+  color: var(--pit-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .deal-image-container {
