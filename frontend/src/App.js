@@ -236,8 +236,57 @@ const Footer = () => {
   );
 };
 
-// Deal Card Component
-const DealCard = ({ promocao, categoria }) => {
+// Product Detail Page Component
+const ProductDetailPage = () => {
+  const { id } = useParams();
+  const [produto, setProduto] = useState(null);
+  const [categoria, setCategoria] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchProductDetails();
+  }, [id]);
+
+  const fetchProductDetails = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch product details
+      const productRes = await axios.get(`${API}/promocoes/${id}`);
+      setProduto(productRes.data);
+      
+      // Fetch all categories
+      const categoriasRes = await axios.get(`${API}/categorias`);
+      const allCategorias = categoriasRes.data;
+      
+      // Find product category
+      const productCategory = allCategorias.find(cat => cat.id === productRes.data.categoria_id);
+      setCategoria(productCategory);
+      
+      // Fetch related products from same category
+      const relatedRes = await axios.get(`${API}/promocoes`, {
+        params: {
+          categoria_id: productRes.data.categoria_id,
+          ativo: true
+        }
+      });
+      
+      // Filter out current product and limit to 3
+      const related = relatedRes.data
+        .filter(p => p.id !== id)
+        .slice(0, 3);
+      setRelatedProducts(related);
+      
+    } catch (error) {
+      console.error('Erro ao carregar produto:', error);
+      navigate('/'); // Redirect to home if product not found
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const formatPrice = (price) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -245,15 +294,178 @@ const DealCard = ({ promocao, categoria }) => {
     }).format(price);
   };
 
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Carregando produto...</p>
+      </div>
+    );
+  }
+
+  if (!produto) {
+    return (
+      <div className="page-container">
+        <div className="product-not-found">
+          <h2>Produto não encontrado</h2>
+          <button onClick={() => navigate('/')} className="back-btn">
+            Voltar às Ofertas
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="deal-card">
+    <div className="page-container">
+      {/* Breadcrumb */}
+      <div className="breadcrumb">
+        <button onClick={() => navigate('/')} className="breadcrumb-link">
+          Melhores Ofertas
+        </button>
+        <span className="breadcrumb-separator">›</span>
+        {categoria && (
+          <>
+            <span className="breadcrumb-item">{categoria.nome}</span>
+            <span className="breadcrumb-separator">›</span>
+          </>
+        )}
+        <span className="breadcrumb-current">{produto.titulo}</span>
+      </div>
+
+      {/* Product Detail */}
+      <div className="product-detail-container">
+        <div className="product-detail-grid">
+          {/* Product Image */}
+          <div className="product-image-section">
+            <div className="product-image-container">
+              <img 
+                src={produto.imagemProduto} 
+                alt={produto.titulo}
+                className="product-detail-image"
+                onError={(e) => {
+                  e.target.src = 'https://via.placeholder.com/600x400/1a1d29/FFD700?text=Imagem+Indisponível';
+                }}
+              />
+              <div className="product-discount-badge">
+                -{produto.percentualDesconto}%
+              </div>
+            </div>
+          </div>
+
+          {/* Product Info */}
+          <div className="product-info-section">
+            <div className="product-header">
+              <h1 className="product-title">{produto.titulo}</h1>
+              
+              {categoria && (
+                <span className="product-category-badge">{categoria.nome}</span>
+              )}
+            </div>
+
+            <div className="product-prices">
+              <div className="price-original">
+                <span className="price-label">De:</span>
+                <span className="price-value">{formatPrice(produto.precoOriginal)}</span>
+              </div>
+              <div className="price-offer">
+                <span className="price-label">Por apenas:</span>
+                <span className="price-value">{formatPrice(produto.precoOferta)}</span>
+              </div>
+              <div className="price-savings">
+                Você economiza: <strong>{formatPrice(produto.precoOriginal - produto.precoOferta)}</strong>
+              </div>
+            </div>
+
+            <div className="product-meta">
+              <div className="meta-item">
+                <span className="meta-label">Publicado em:</span>
+                <span className="meta-value">{formatDate(produto.dataPostagem)}</span>
+              </div>
+              <div className="meta-item">
+                <span className="meta-label">Desconto:</span>
+                <span className="meta-value discount-highlight">{produto.percentualDesconto}% OFF</span>
+              </div>
+            </div>
+
+            <div className="product-actions">
+              <a 
+                href={produto.linkOferta}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="buy-now-btn"
+              >
+                🛒 Comprar na Loja
+              </a>
+              
+              <button 
+                onClick={() => navigate('/')}
+                className="back-to-offers-btn"
+              >
+                ← Voltar às Ofertas
+              </button>
+            </div>
+
+            <div className="product-warning">
+              ⚠️ <strong>Atenção:</strong> Os preços podem variar. Verifique o valor atual no site da loja antes de finalizar a compra.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Related Products */}
+      {relatedProducts.length > 0 && (
+        <div className="related-products-section">
+          <h2>Outras ofertas de {categoria?.nome}</h2>
+          <div className="related-products-grid">
+            {relatedProducts.map(relatedProduct => (
+              <DealCard 
+                key={relatedProduct.id} 
+                promocao={relatedProduct}
+                categoria={categoria}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Deal Card Component (Updated to be clickable)
+const DealCard = ({ promocao, categoria }) => {
+  const navigate = useNavigate();
+  
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(price);
+  };
+
+  const handleCardClick = () => {
+    navigate(`/produto/${promocao.id}`);
+  };
+
+  return (
+    <div className="deal-card" onClick={handleCardClick}>
       <div className="deal-image-container">
         <img 
           src={promocao.imagemProduto} 
           alt={promocao.titulo}
           className="deal-image"
           onError={(e) => {
-            e.target.src = 'https://via.placeholder.com/300x200?text=Imagem+Indisponível';
+            e.target.src = 'https://via.placeholder.com/300x200/1a1d29/FFD700?text=Imagem+Indisponível';
           }}
         />
         <div className="deal-discount">
@@ -273,14 +485,11 @@ const DealCard = ({ promocao, categoria }) => {
           <span className="deal-price-offer">{formatPrice(promocao.precoOferta)}</span>
         </div>
         
-        <a 
-          href={promocao.linkOferta}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="deal-button"
-        >
-          Ver Oferta
-        </a>
+        <div className="deal-button-container">
+          <button className="deal-button">
+            Ver Detalhes
+          </button>
+        </div>
       </div>
     </div>
   );
