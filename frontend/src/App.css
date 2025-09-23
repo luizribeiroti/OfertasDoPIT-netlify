@@ -1166,6 +1166,11 @@ html {
   transition: all 0.3s ease;
 }
 
+.form-select option {
+  background: var(--pit-bg-secondary);
+  color: var(--pit-text);
+}
+
 .form-input:focus, .form-select:focus {
   outline: none;
   border-color: var(--pit-primary);
