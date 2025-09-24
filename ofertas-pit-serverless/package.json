@@ -1,0 +1,25 @@
+{
+  "name": "ofertas-do-pit-serverless",
+  "version": "1.0.0",
+  "description": "Ofertas do PIT - Plataforma Serverless de Promoções",
+  "main": "index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "build": "npm run build:frontend && npm run build:worker",
+    "build:frontend": "cd frontend && npm run build",
+    "build:worker": "esbuild src/worker.js --bundle --outfile=dist/worker.js --format=esm",
+    "db:init": "wrangler d1 execute ofertas-pit-db --file=./schema.sql",
+    "db:migrate": "wrangler d1 migrations apply ofertas-pit-db",
+    "preview": "cd frontend && npm run preview"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0",
+    "esbuild": "^0.19.0"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.0.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

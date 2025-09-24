@@ -1,0 +1,29 @@
+name = "ofertas-do-pit"
+main = "src/worker.js"
+compatibility_date = "2024-01-01"
+
+# Database
+[[d1_databases]]
+binding = "DB"
+database_name = "ofertas-pit-db"
+database_id = "your-database-id-here"
+
+# KV Storage for sessions
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "your-kv-namespace-id-here"
+
+# Environment variables
+[vars]
+JWT_SECRET = "ofertas-pit-super-secret-key-2024"
+ADMIN_EMAIL = "luiz.ribeiro@ofertas.pit"
+ADMIN_PASSWORD_HASH = "$2a$10$placeholder-hash-here"
+
+# Routes for API
+[[routes]]
+pattern = "ofertasdopit.com.br/api/*"
+zone_name = "ofertasdopit.com.br"
+
+[[routes]]
+pattern = "www.ofertasdopit.com.br/api/*"
+zone_name = "ofertasdopit.com.br"
