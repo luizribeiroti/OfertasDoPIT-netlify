@@ -11,7 +11,7 @@ database_id = "COLE_SEU_DATABASE_ID_AQUI"
 # KV Storage for sessions
 [[kv_namespaces]]
 binding = "SESSIONS"
-id = "your-kv-namespace-id-here"
+id = "COLE_SEU_KV_ID_AQUI"
 
 # Environment variables
 [vars]
