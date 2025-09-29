@@ -6,7 +6,7 @@ compatibility_date = "2024-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "ofertas-pit-db"
-database_id = "your-database-id-here"
+database_id = "COLE_SEU_DATABASE_ID_AQUI"
 
 # KV Storage for sessions
 [[kv_namespaces]]
