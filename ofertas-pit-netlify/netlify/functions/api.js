@@ -164,48 +164,24 @@ async function handleCreateCategoria(body) {
 }
 
 // Promotion functions
-async function handleGetPromocoes(params, headers) {
+async function handleGetPromocoes(params) {
   try {
-    let query = supabase
-      .from('promocoes')
-      .select(`
-        *,
-        categoria:categorias(id, nome, slug)
-      `)
-
-    // Apply filters
+    const filters = {}
+    
     if (params.categoria_id) {
-      query = query.eq('categoria_id', params.categoria_id)
+      filters.categoria_id = params.categoria_id
     }
     if (params.ativo !== 'false') {
-      query = query.eq('ativo', true)
+      filters.ativo = true
+    }
+    if (params.ordenar_por) {
+      filters.ordenar_por = params.ordenar_por
     }
 
-    // Apply sorting
-    const ordenar_por = params.ordenar_por || 'data_recente'
-    switch (ordenar_por) {
-      case 'maior_desconto':
-        query = query.order('percentual_desconto', { ascending: false })
-        break
-      case 'menor_desconto':
-        query = query.order('percentual_desconto', { ascending: true })
-        break
-      case 'maior_preco':
-        query = query.order('preco_oferta', { ascending: false })
-        break
-      case 'menor_preco':
-        query = query.order('preco_oferta', { ascending: true })
-        break
-      default:
-        query = query.order('data_postagem', { ascending: false })
-    }
-
-    const { data, error } = await query.limit(100)
+    const promocoes = await PromocaoService.getAll(filters)
     
-    if (error) throw error
-
     // Format response to match frontend expectations
-    const formattedData = (data || []).map(promo => ({
+    const formattedData = promocoes.map(promo => ({
       ...promo,
       imagemProduto: promo.imagem_produto,
       precoOriginal: promo.preco_original,
@@ -216,18 +192,10 @@ async function handleGetPromocoes(params, headers) {
       dataPostagem: promo.data_postagem
     }))
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify(formattedData)
-    }
+    return createResponse(200, formattedData)
   } catch (error) {
     console.error('Get promocoes error:', error)
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: 'Erro ao carregar promoções' })
-    }
+    return createResponse(500, { error: 'Erro ao carregar promoções' })
   }
 }
 
