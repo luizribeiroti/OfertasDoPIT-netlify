@@ -268,27 +268,13 @@ async function handleUpdatePromocao(id, body) {
   }
 }
 
-async function handleDeletePromocao(id, headers) {
+async function handleDeletePromocao(id) {
   try {
-    const { error } = await supabase
-      .from('promocoes')
-      .delete()
-      .eq('id', id)
-
-    if (error) throw error
-
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ message: 'Promoção removida com sucesso' })
-    }
+    await PromocaoService.delete(id)
+    return createResponse(200, { message: 'Promoção removida com sucesso' })
   } catch (error) {
     console.error('Delete promocao error:', error)
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({ error: 'Erro ao remover promoção' })
-    }
+    return createResponse(400, { error: 'Erro ao remover promoção' })
   }
 }
 
