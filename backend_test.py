@@ -4,7 +4,7 @@ from datetime import datetime
 import json
 
 class OfertasPITAPITester:
-    def __init__(self, base_url="https://promocoespit.preview.emergentagent.com"):
+    def __init__(self, base_url="https://offers-pit.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.token = None
