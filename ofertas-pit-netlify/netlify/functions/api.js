@@ -247,50 +247,24 @@ async function handleCreatePromocao(body) {
   }
 }
 
-async function handleUpdatePromocao(id, body, headers) {
+async function handleUpdatePromocao(id, body) {
   try {
-    const updateData = { ...body }
+    const updateData = {}
     
     // Convert field names to match database
+    if (body.titulo) updateData.titulo = body.titulo
     if (body.imagemProduto) updateData.imagem_produto = body.imagemProduto
-    if (body.precoOriginal) updateData.preco_original = parseFloat(body.precoOriginal)
-    if (body.precoOferta) updateData.preco_oferta = parseFloat(body.precoOferta)
+    if (body.precoOriginal) updateData.preco_original = body.precoOriginal
+    if (body.precoOferta) updateData.preco_oferta = body.precoOferta
     if (body.linkOferta) updateData.link_oferta = body.linkOferta
-    
-    // Recalculate discount if prices changed
-    if (body.precoOriginal || body.precoOferta) {
-      const original = parseFloat(body.precoOriginal || updateData.preco_original)
-      const offer = parseFloat(body.precoOferta || updateData.preco_oferta)
-      updateData.percentual_desconto = Math.round(((original - offer) / original) * 100 * 100) / 100
-    }
+    if (body.categoria_id) updateData.categoria_id = body.categoria_id
+    if (body.ativo !== undefined) updateData.ativo = body.ativo
 
-    // Remove frontend field names
-    delete updateData.imagemProduto
-    delete updateData.precoOriginal
-    delete updateData.precoOferta
-    delete updateData.linkOferta
-
-    const { data, error } = await supabase
-      .from('promocoes')
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single()
-
-    if (error) throw error
-
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify(data)
-    }
+    const promocao = await PromocaoService.update(id, updateData)
+    return createResponse(200, promocao)
   } catch (error) {
     console.error('Update promocao error:', error)
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({ error: 'Erro ao atualizar promoção' })
-    }
+    return createResponse(400, { error: 'Erro ao atualizar promoção' })
   }
 }
 
