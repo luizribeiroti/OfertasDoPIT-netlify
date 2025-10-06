@@ -143,54 +143,23 @@ async function verifyAuth(authHeader) {
 }
 
 // Category functions
-async function handleGetCategorias(headers) {
+async function handleGetCategorias() {
   try {
-    const { data, error } = await supabase
-      .from('categorias')
-      .select('*')
-      .order('nome')
-
-    if (error) throw error
-
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify(data || [])
-    }
+    const categorias = await CategoriaService.getAll()
+    return createResponse(200, categorias)
   } catch (error) {
     console.error('Get categorias error:', error)
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: 'Erro ao carregar categorias' })
-    }
+    return createResponse(500, { error: 'Erro ao carregar categorias' })
   }
 }
 
-async function handleCreateCategoria(body, headers) {
+async function handleCreateCategoria(body) {
   try {
-    const { nome, slug } = body
-
-    const { data, error } = await supabase
-      .from('categorias')
-      .insert({ nome, slug })
-      .select()
-      .single()
-
-    if (error) throw error
-
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify(data)
-    }
+    const categoria = await CategoriaService.create(body)
+    return createResponse(200, categoria)
   } catch (error) {
     console.error('Create categoria error:', error)
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({ error: 'Erro ao criar categoria' })
-    }
+    return createResponse(400, { error: 'Erro ao criar categoria' })
   }
 }
 
