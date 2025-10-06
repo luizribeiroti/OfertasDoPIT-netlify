@@ -143,8 +143,11 @@ async function verifyAuth(authHeader) {
     }
 
     const token = authHeader.replace('Bearer ', '')
-    const decoded = await verifyJWT(token)
-    return { success: true, userId: decoded.sub }
+    const decoded = verifyToken(token)
+    if (!decoded) {
+      return { success: false }
+    }
+    return { success: true, userId: decoded.userId }
   } catch (error) {
     console.error('Auth verification error:', error)
     return { success: false }
