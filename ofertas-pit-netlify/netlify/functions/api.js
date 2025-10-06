@@ -199,49 +199,30 @@ async function handleGetPromocoes(params) {
   }
 }
 
-async function handleGetPromocao(id, headers) {
+async function handleGetPromocao(id) {
   try {
-    const { data, error } = await supabase
-      .from('promocoes')
-      .select(`
-        *,
-        categoria:categorias(id, nome, slug)
-      `)
-      .eq('id', id)
-      .single()
+    const promocao = await PromocaoService.getById(id)
 
-    if (error || !data) {
-      return {
-        statusCode: 404,
-        headers,
-        body: JSON.stringify({ error: 'Promoção não encontrada' })
-      }
+    if (!promocao) {
+      return createResponse(404, { error: 'Promoção não encontrada' })
     }
 
     // Format response
     const formattedData = {
-      ...data,
-      imagemProduto: data.imagem_produto,
-      precoOriginal: data.preco_original,
-      precoOferta: data.preco_oferta,
-      percentualDesconto: data.percentual_desconto,
-      linkOferta: data.link_oferta,
-      categoria_id: data.categoria_id,
-      dataPostagem: data.data_postagem
+      ...promocao,
+      imagemProduto: promocao.imagem_produto,
+      precoOriginal: promocao.preco_original,
+      precoOferta: promocao.preco_oferta,
+      percentualDesconto: promocao.percentual_desconto,
+      linkOferta: promocao.link_oferta,
+      categoria_id: promocao.categoria_id,
+      dataPostagem: promocao.data_postagem
     }
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify(formattedData)
-    }
+    return createResponse(200, formattedData)
   } catch (error) {
     console.error('Get promocao error:', error)
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: 'Erro ao carregar promoção' })
-    }
+    return createResponse(500, { error: 'Erro ao carregar promoção' })
   }
 }
 
