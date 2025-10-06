@@ -19,16 +19,12 @@ exports.handler = async (event, context) => {
   try {
     // Health check
     if (path === '/health' || path === '/') {
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-          status: 'healthy',
-          timestamp: new Date().toISOString(),
-          version: '3.0.0-netlify',
-          service: 'Ofertas do PIT API'
-        })
-      }
+      return createResponse(200, {
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        version: '3.0.0-netlify',
+        service: 'Ofertas do PIT API'
+      })
     }
 
     // Auth endpoints
