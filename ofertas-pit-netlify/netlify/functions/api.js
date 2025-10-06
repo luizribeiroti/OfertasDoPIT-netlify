@@ -5,17 +5,9 @@ const { PromocaoService, CategoriaService, UsuarioService, ConfiguracaoService }
 const JWT_SECRET = process.env.JWT_SECRET || 'ofertas-pit-secret-2024'
 
 exports.handler = async (event, context) => {
-  // CORS headers
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json'
-  }
-
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' }
+    return createResponse(200, '')
   }
 
   // Extract path from Netlify function context
