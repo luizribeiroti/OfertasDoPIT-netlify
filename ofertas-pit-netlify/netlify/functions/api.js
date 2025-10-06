@@ -29,7 +29,7 @@ exports.handler = async (event, context) => {
 
     // Auth endpoints
     if (path === '/auth/login' && method === 'POST') {
-      return await handleLogin(JSON.parse(event.body), headers)
+      return await handleLogin(JSON.parse(event.body))
     }
 
     // Public endpoints
