@@ -1,5 +1,5 @@
 const { createClient } = require('@supabase/supabase-js')
-const { generateId, formatDate, parseDate, calculateDiscount } = require('./utils')
+const { generateId, formatDate, parseDate, calculateDiscount, createSlug } = require('./utils')
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL
