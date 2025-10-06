@@ -226,42 +226,24 @@ async function handleGetPromocao(id) {
   }
 }
 
-async function handleCreatePromocao(body, headers) {
+async function handleCreatePromocao(body) {
   try {
-    const { titulo, imagemProduto, precoOriginal, precoOferta, linkOferta, categoria_id, ativo = true } = body
-
-    // Calculate discount percentage
-    const percentualDesconto = Math.round(((precoOriginal - precoOferta) / precoOriginal) * 100 * 100) / 100
-
-    const { data, error } = await supabase
-      .from('promocoes')
-      .insert({
-        titulo,
-        imagem_produto: imagemProduto,
-        preco_original: parseFloat(precoOriginal),
-        preco_oferta: parseFloat(precoOferta),
-        percentual_desconto: percentualDesconto,
-        link_oferta: linkOferta,
-        categoria_id,
-        ativo
-      })
-      .select()
-      .single()
-
-    if (error) throw error
-
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify(data)
+    // Convert frontend field names to database field names
+    const promocaoData = {
+      titulo: body.titulo,
+      imagem_produto: body.imagemProduto,
+      preco_original: body.precoOriginal,
+      preco_oferta: body.precoOferta,
+      link_oferta: body.linkOferta,
+      categoria_id: body.categoria_id,
+      ativo: body.ativo !== undefined ? body.ativo : true
     }
+
+    const promocao = await PromocaoService.create(promocaoData)
+    return createResponse(200, promocao)
   } catch (error) {
     console.error('Create promocao error:', error)
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({ error: 'Erro ao criar promoção', details: error.message })
-    }
+    return createResponse(400, { error: 'Erro ao criar promoção', details: error.message })
   }
 }
 
