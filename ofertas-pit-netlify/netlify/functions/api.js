@@ -296,40 +296,24 @@ async function handleGetSocialLinks() {
   }
 }
 
-async function handleUpdateSocialLinks(body, headers) {
+async function handleUpdateSocialLinks(body) {
   try {
     const { whatsapp, telegram } = body
 
-    const updates = []
+    const promises = []
     if (whatsapp) {
-      updates.push(
-        supabase
-          .from('configuracoes')
-          .upsert({ chave: 'links_whatsapp', valor: whatsapp }, { onConflict: 'chave' })
-      )
+      promises.push(ConfiguracaoService.setSocialLink('whatsapp', whatsapp))
     }
     if (telegram) {
-      updates.push(
-        supabase
-          .from('configuracoes')
-          .upsert({ chave: 'links_telegram', valor: telegram }, { onConflict: 'chave' })
-      )
+      promises.push(ConfiguracaoService.setSocialLink('telegram', telegram))
     }
 
-    await Promise.all(updates)
+    await Promise.all(promises)
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ message: 'Links atualizados com sucesso' })
-    }
+    return createResponse(200, { message: 'Links atualizados com sucesso' })
   } catch (error) {
     console.error('Update social links error:', error)
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({ error: 'Erro ao atualizar links' })
-    }
+    return createResponse(400, { error: 'Erro ao atualizar links' })
   }
 }
 
