@@ -35,54 +35,46 @@ exports.handler = async (event, context) => {
     // Public endpoints
     if (method === 'GET') {
       if (path === '/categorias') {
-        return await handleGetCategorias(headers)
+        return await handleGetCategorias()
       }
       if (path === '/promocoes') {
-        return await handleGetPromocoes(event.queryStringParameters || {}, headers)
+        return await handleGetPromocoes(event.queryStringParameters || {})
       }
       if (path.startsWith('/promocoes/')) {
         const id = path.split('/')[2]
-        return await handleGetPromocao(id, headers)
+        return await handleGetPromocao(id)
       }
       if (path === '/config/links') {
-        return await handleGetSocialLinks(headers)
+        return await handleGetSocialLinks()
       }
     }
 
     // Protected endpoints - require authentication
     const authResult = await verifyAuth(event.headers.authorization || event.headers.Authorization)
     if (!authResult.success) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ error: 'Unauthorized - Token required' })
-      }
+      return createResponse(401, { error: 'Unauthorized - Token required' })
     }
 
     // Admin endpoints
     if (path === '/promocoes' && method === 'POST') {
-      return await handleCreatePromocao(JSON.parse(event.body), headers)
+      return await handleCreatePromocao(JSON.parse(event.body))
     }
     if (path.startsWith('/promocoes/') && method === 'PUT') {
       const id = path.split('/')[2]
-      return await handleUpdatePromocao(id, JSON.parse(event.body), headers)
+      return await handleUpdatePromocao(id, JSON.parse(event.body))
     }
     if (path.startsWith('/promocoes/') && method === 'DELETE') {
       const id = path.split('/')[2]
-      return await handleDeletePromocao(id, headers)
+      return await handleDeletePromocao(id)
     }
     if (path === '/categorias' && method === 'POST') {
-      return await handleCreateCategoria(JSON.parse(event.body), headers)
+      return await handleCreateCategoria(JSON.parse(event.body))
     }
     if (path === '/config/links' && method === 'PUT') {
-      return await handleUpdateSocialLinks(JSON.parse(event.body), headers)
+      return await handleUpdateSocialLinks(JSON.parse(event.body))
     }
 
-    return {
-      statusCode: 404,
-      headers,
-      body: JSON.stringify({ error: 'Endpoint not found', path, method })
-    }
+    return createResponse(404, { error: 'Endpoint not found', path, method })
 
   } catch (error) {
     console.error('Function Error:', error)
