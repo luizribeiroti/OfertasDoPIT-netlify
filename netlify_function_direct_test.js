@@ -10,22 +10,24 @@ console.log('🔧 Direct Netlify Functions Test');
 console.log('================================');
 
 // Test function imports
+let utils, database, api;
+
 try {
     console.log('\n📋 TESTING FUNCTION IMPORTS');
     console.log('-'.repeat(30));
     
     // Test utils import
-    const utils = require('./ofertas-pit-netlify/netlify/functions/utils.js');
+    utils = require('./ofertas-pit-netlify/netlify/functions/utils.js');
     console.log('✅ Utils module imported successfully');
     console.log(`   Available functions: ${Object.keys(utils).join(', ')}`);
     
     // Test database import
-    const database = require('./ofertas-pit-netlify/netlify/functions/database.js');
+    database = require('./ofertas-pit-netlify/netlify/functions/database.js');
     console.log('✅ Database module imported successfully');
     console.log(`   Available services: ${Object.keys(database).join(', ')}`);
     
     // Test API import
-    const api = require('./ofertas-pit-netlify/netlify/functions/api.js');
+    api = require('./ofertas-pit-netlify/netlify/functions/api.js');
     console.log('✅ API module imported successfully');
     console.log(`   Handler function: ${typeof api.handler === 'function' ? 'Found' : 'Missing'}`);
     
