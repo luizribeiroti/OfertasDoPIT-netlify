@@ -279,42 +279,20 @@ async function handleDeletePromocao(id) {
 }
 
 // Social links functions
-async function handleGetSocialLinks(headers) {
+async function handleGetSocialLinks() {
   try {
-    const { data, error } = await supabase
-      .from('configuracoes')
-      .select('chave, valor')
-      .in('chave', ['links_whatsapp', 'links_telegram'])
-
-    if (error) throw error
-
-    const links = {
-      whatsapp: 'https://wa.me/',
-      telegram: 'https://t.me/'
+    const links = await ConfiguracaoService.getSocialLinks()
+    
+    // Provide default links if none are configured
+    const defaultLinks = {
+      whatsapp: links.whatsapp || 'https://wa.me/',
+      telegram: links.telegram || 'https://t.me/'
     }
 
-    if (data) {
-      data.forEach(config => {
-        if (config.chave === 'links_whatsapp') {
-          links.whatsapp = config.valor
-        } else if (config.chave === 'links_telegram') {
-          links.telegram = config.valor
-        }
-      })
-    }
-
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify(links)
-    }
+    return createResponse(200, defaultLinks)
   } catch (error) {
     console.error('Get social links error:', error)
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: 'Erro ao carregar links sociais' })
-    }
+    return createResponse(500, { error: 'Erro ao carregar links sociais' })
   }
 }
 
