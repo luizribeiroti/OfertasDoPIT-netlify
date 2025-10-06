@@ -78,14 +78,10 @@ exports.handler = async (event, context) => {
 
   } catch (error) {
     console.error('Function Error:', error)
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ 
-        error: 'Internal Server Error',
-        message: error.message 
-      })
-    }
+    return createResponse(500, { 
+      error: 'Internal Server Error',
+      message: error.message 
+    })
   }
 }
 
