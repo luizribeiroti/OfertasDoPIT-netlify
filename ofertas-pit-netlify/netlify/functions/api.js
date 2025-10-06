@@ -1,9 +1,5 @@
-const { createClient } = require('@supabase/supabase-js')
-
-// Supabase configuration
-const supabaseUrl = process.env.SUPABASE_URL
-const supabaseKey = process.env.SUPABASE_ANON_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+const { createResponse, verifyToken, comparePassword } = require('./utils')
+const { PromocaoService, CategoriaService, UsuarioService, ConfiguracaoService } = require('./database')
 
 // JWT configuration
 const JWT_SECRET = process.env.JWT_SECRET || 'ofertas-pit-secret-2024'
