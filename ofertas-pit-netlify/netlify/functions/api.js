@@ -317,42 +317,4 @@ async function handleUpdateSocialLinks(body) {
   }
 }
 
-// Utility functions
-async function generateJWT(payload) {
-  // Simple JWT implementation for serverless
-  const header = { alg: 'HS256', typ: 'JWT' }
-  const now = Math.floor(Date.now() / 1000)
-  const jwtPayload = { ...payload, iat: now, exp: now + (24 * 60 * 60) }
-  
-  const encodedHeader = Buffer.from(JSON.stringify(header)).toString('base64url')
-  const encodedPayload = Buffer.from(JSON.stringify(jwtPayload)).toString('base64url')
-  
-  const data = `${encodedHeader}.${encodedPayload}`
-  
-  // Simple signature (in production, use proper HMAC)
-  const signature = Buffer.from(JWT_SECRET + data).toString('base64url').slice(0, 32)
-  
-  return `${data}.${signature}`
-}
-
-async function verifyJWT(token) {
-  try {
-    const [encodedHeader, encodedPayload, signature] = token.split('.')
-    const payload = JSON.parse(Buffer.from(encodedPayload, 'base64url').toString())
-    
-    // Check expiration
-    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
-      throw new Error('Token expired')
-    }
-    
-    return payload
-  } catch (error) {
-    throw new Error('Invalid token')
-  }
-}
-
-async function verifyPassword(password, hash) {
-  // Simple password verification (in production, use bcrypt)
-  // For now, just check if they match (demo purposes)
-  return password === 'secure' // Hardcoded for demo
-}
+// End of API handlers
